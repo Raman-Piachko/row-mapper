@@ -12,21 +12,28 @@ import java.sql.SQLException;
 
 
 public class RowMapperImpl implements RowMapper {
-    public static final Logger LOGGER = LogManager.getLogger(RowMapperImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(RowMapperImpl.class);
+    private static final String ID = "id";
+    private static final String FIRSTNAME = "firstname";
+    private static final String LASTNAME = "lastname";
+    private static final String MIDDLE_NAME = "middleName";
+    private static final String POSITION = "position";
+    private static final String HIREDATE = "hiredate";
+    private static final String SALARY = "salary";
 
     @Override
     public Object mapRow(ResultSet resultSet) {
         Employee employee = null;
         try {
             employee = new Employee(
-                    new BigInteger(String.valueOf(resultSet.getInt("id"))),
+                    new BigInteger(String.valueOf(resultSet.getInt(ID))),
                     new FullName(
-                            resultSet.getString("firstname"),
-                            resultSet.getString("lastname"),
-                            resultSet.getString("middleName")),
-                    Position.valueOf(resultSet.getString("position")),
-                    resultSet.getDate("hiredate").toLocalDate(),
-                    resultSet.getBigDecimal("salary"));
+                            resultSet.getString(FIRSTNAME),
+                            resultSet.getString(LASTNAME),
+                            resultSet.getString(MIDDLE_NAME)),
+                    Position.valueOf(resultSet.getString(POSITION)),
+                    resultSet.getDate(HIREDATE).toLocalDate(),
+                    resultSet.getBigDecimal(SALARY));
         } catch (SQLException e) {
             LOGGER.error("Something went wrong at mapRow!!!", e);
         }
