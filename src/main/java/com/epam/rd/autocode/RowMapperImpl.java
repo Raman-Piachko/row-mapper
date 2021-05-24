@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class RowMapperImpl implements RowMapper {
+public class RowMapperImpl implements RowMapper<Employee> {
     private static final Logger LOGGER = LogManager.getLogger(RowMapperImpl.class);
     private static final String ID = "id";
     private static final String FIRSTNAME = "firstname";
@@ -22,22 +22,22 @@ public class RowMapperImpl implements RowMapper {
     private static final String SALARY = "salary";
 
     @Override
-    public Object mapRow(ResultSet resultSet) {
-        Employee employee = null;
+    public Employee mapRow(ResultSet resultSet) {
         try {
-            employee = new Employee(
-                    new BigInteger(String.valueOf(resultSet.getInt(ID))),
-                    new FullName(
-                            resultSet.getString(FIRSTNAME),
-                            resultSet.getString(LASTNAME),
-                            resultSet.getString(MIDDLE_NAME)),
+            FullName fullname = new FullName(
+                    resultSet.getString(FIRSTNAME),
+                    resultSet.getString(LASTNAME),
+                    resultSet.getString(MIDDLE_NAME));
+
+            return new Employee(
+                    new BigInteger(resultSet.getString(ID)),
+                    fullname,
                     Position.valueOf(resultSet.getString(POSITION)),
                     resultSet.getDate(HIREDATE).toLocalDate(),
                     resultSet.getBigDecimal(SALARY));
         } catch (SQLException e) {
             LOGGER.error("Something went wrong at mapRow!!!", e);
+            throw new RuntimeException(e);
         }
-
-        return employee;
     }
 }
